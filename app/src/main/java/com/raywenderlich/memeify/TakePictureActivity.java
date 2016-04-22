@@ -8,11 +8,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +24,16 @@ import java.util.Locale;
 
 
 public class TakePictureActivity extends Activity implements View.OnClickListener {
+    public static final String TAG = TakePictureActivity.class.getName();
+
+    // implicit intent
     private static final int TAKE_PHOTO_REQUEST_CODE = 1;
+
+    // explicit intent
+    private static final String IMAGE_URI_KEY = "IMAGE_URI";
+    private static final String BITMAP_WIDTH = "BITMAP_WIDTH";
+    private static final String BITMAP_HEIGHT = "BITMAP_HEIGHT";
+
     private Boolean pictureTaken = false;
 
 
@@ -67,6 +78,7 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
                 break;
 
             case R.id.enter_text_button:
+                moveToNextScreen();
                 break;
 
             default:
@@ -95,9 +107,11 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i(TAG, "onActivityResult: resultCode" + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
 
         // xác định intent trả về có đúng là Intent của bạn ko?
+        // xác định bạn có chụp hình ko? nếu có thì result code sẽ là -1 (=0 thì chưa chụp hình mà quay về)
         if (requestCode == TAKE_PHOTO_REQUEST_CODE && resultCode == RESULT_OK) {
             setImageViewWithImage();
         }
@@ -119,6 +133,7 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
 
+        // create a path
         File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES + APP_PICTURE_DIRECTORY);
         storageDir.mkdirs();
@@ -152,5 +167,17 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
         return Uri.parse(result);
     }
 
+    // explicit intent
+    private void moveToNextScreen() {
+        if (pictureTaken) {
+            Intent nextScreenIntent = new Intent(this, EnterTextActivity.class);
+            nextScreenIntent.putExtra(IMAGE_URI_KEY, selectedPhotoPath);
+            nextScreenIntent.putExtra(BITMAP_WIDTH, takePictureImageView.getWidth());
+            nextScreenIntent.putExtra(BITMAP_HEIGHT, takePictureImageView.getHeight());
 
+            startActivity(nextScreenIntent);
+        } else {
+            Toast.makeText(this, R.string.select_a_picture, Toast.LENGTH_SHORT).show();
+        }
+    }
 }

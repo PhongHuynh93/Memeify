@@ -1,6 +1,7 @@
 package com.raywenderlich.memeify;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -79,9 +80,11 @@ public class EnterTextActivity extends Activity implements View.OnClickListener 
         switch (v.getId()) {
 
             case R.id.write_text_to_image_button:
+                createMeme();
                 break;
 
             case R.id.save_image_button:
+                saveImageToGallery(viewBitmap);
                 break;
         }
     }
@@ -172,7 +175,14 @@ public class EnterTextActivity extends Activity implements View.OnClickListener 
             }
 
 
-            Toast.makeText(this, getResources().getText(R.string.save_image_succeeded).toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.save_image_succeeded, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, getResources().getText(R.string.save_image_succeeded).toString(), Toast.LENGTH_SHORT).show();
+
+            // Create intent to request newly created file to be scanned, pass picture uri and broadcast intent
+            // lưu ảnh của mình vào media database
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            mediaScanIntent.setData(Uri.fromFile(imageFile));
+            sendBroadcast(mediaScanIntent); // send broadcast cho những app nào show các bức ảnh có thể thấy ảnh của mình
 
         } else {
             Toast.makeText(this, getResources().getText(R.string.add_meme_message).toString(), Toast.LENGTH_SHORT).show();

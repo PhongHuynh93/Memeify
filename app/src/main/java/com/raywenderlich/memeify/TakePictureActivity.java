@@ -93,6 +93,8 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
 
         // create an empty file to store image
         File photoFile = createImageFile();
+
+        // lấy dường dẫn trong điện thoại
         selectedPhotoPath = Uri.parse(photoFile.getAbsolutePath());
 
         // đặt tả đường dẫn to save image.
@@ -128,7 +130,6 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
     }
 
     private File createImageFile() {
-
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -137,7 +138,6 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
         File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES + APP_PICTURE_DIRECTORY);
         storageDir.mkdirs();
-
         File imageFile = null;
 
         try {

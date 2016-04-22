@@ -59,6 +59,8 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
 
         nextScreenButton = (Button) findViewById(R.id.enter_text_button);
         nextScreenButton.setOnClickListener(this);
+
+        checkReceivedIntent();
     }
 
     @Override
@@ -179,6 +181,27 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
             startActivity(nextScreenIntent);
         } else {
             Toast.makeText(this, R.string.select_a_picture, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    // function to receive an Implicit Intent
+    private void checkReceivedIntent() {
+
+        Intent imageRecievedIntent = getIntent();
+        // nhan action + type
+        String intentAction = imageRecievedIntent.getAction();
+        String intentType = imageRecievedIntent.getType();
+
+        if (Intent.ACTION_SEND.equals(intentAction) && intentType != null) {
+            if (intentType.startsWith(MIME_TYPE_IMAGE)) {
+                // xet xem co cung action là Send và type la image ko
+                Uri contentUri = imageRecievedIntent.getParcelableExtra(Intent.EXTRA_STREAM);
+                // lay dia chi cua hinh do
+                selectedPhotoPath = getRealPathFromURI(contentUri);
+                // thay dổi hình cho appp
+                setImageViewWithImage();
+            }
         }
     }
 }

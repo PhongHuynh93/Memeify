@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
@@ -20,9 +21,13 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.sql.SQLClientInfoException;
 
 public class EnterTextActivity extends Activity implements View.OnClickListener {
+    public static final String TAG = EnterTextActivity.class.getName();
+    // String for getting intent
+    private static final String IMAGE_URI_KEY = "IMAGE_URI";
+    private static final String BITMAP_WIDTH = "BITMAP_WIDTH";
+    private static final String BITMAP_HEIGHT = "BITMAP_HEIGHT";
 
     private static final String APP_PICTURE_DIRECTORY = "/Memeify";
     private static final String FILE_SUFFIX_JPG = ".jpg";
@@ -56,6 +61,16 @@ public class EnterTextActivity extends Activity implements View.OnClickListener 
         bottomTextEditText = (EditText) findViewById(R.id.bottom_text_edittext);
 
         originalImage = true;
+
+        // get intent
+        pictureUri = getIntent().getParcelableExtra(IMAGE_URI_KEY); // lấy intent dạng Object
+        int bitmapWidth = getIntent().getIntExtra(BITMAP_WIDTH, 100); // lấy intent dạng Int
+        Log.i(TAG, "onCreate: bitmapWidth " + bitmapWidth);
+        int bitmapHeight = getIntent().getIntExtra(BITMAP_HEIGHT, 100); // gia trị default được lấy khi key sai, hay lúc gửi ko có gửi cho intent
+        Log.i(TAG, "onCreate: bitmapHeight " + bitmapHeight);
+
+        Bitmap selectedImageBitmap = BitmapResizer.ShrinkBitmap(pictureUri.toString(), bitmapWidth, bitmapHeight);
+        selectedPicture.setImageBitmap(selectedImageBitmap);
     }
 
     @Override

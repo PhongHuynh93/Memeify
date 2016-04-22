@@ -170,8 +170,9 @@ public class TakePictureActivity extends Activity implements View.OnClickListene
     // explicit intent
     private void moveToNextScreen() {
         if (pictureTaken) {
+            // khi đã có ảnh chụp rồi
             Intent nextScreenIntent = new Intent(this, EnterTextActivity.class);
-            nextScreenIntent.putExtra(IMAGE_URI_KEY, selectedPhotoPath);
+            nextScreenIntent.putExtra(IMAGE_URI_KEY, selectedPhotoPath); // đường dẫn của image đã chụp
             nextScreenIntent.putExtra(BITMAP_WIDTH, takePictureImageView.getWidth());
             nextScreenIntent.putExtra(BITMAP_HEIGHT, takePictureImageView.getHeight());
 
